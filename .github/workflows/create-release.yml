@@ -1,0 +1,44 @@
+
+name: Create Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set LanguageTool version
+        run: "echo \"LT_VERSION=$(python -u -c \"import re; print(re.search(r'<lt-version>(.*?)</lt-version>', open('pom.xml', 'r').read()).group(1), end='')\")\" >> $GITHUB_ENV"
+
+      - name: Checkout LanguageTool
+        run: git clone --depth 1 --branch v${{ env.LT_VERSION }} https://github.com/languagetool-org/languagetool.git
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - name: Build LanguageTool
+        working-directory: ./languagetool
+        run: ./build.sh languagetool-standalone package -DskipTests
+
+      - name: Create tag
+        run: git tag ${{ env.LT_VERSION }} && git push origin ${{ env.LT_VERSION }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2.0.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.LT_VERSION }}
+          body: LanguageTool ${{ env.LT_VERSION }} build from https://github.com/languagetool-org/languagetool used for https://github.com/ltex-plus/ltex-ls-plus
+          files: languagetool/languagetool-standalone/target/LanguageTool-*.zip
+  

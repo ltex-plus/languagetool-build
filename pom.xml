@@ -6,7 +6,7 @@
   <version>1.0</version>
   <name>Unofficial LanguageTool builds</name>
   <properties>
-    <lt-version>6.4</lt-version>
+    <lt-version>6.5</lt-version>
   </properties>
   <dependencies>
     <dependency>

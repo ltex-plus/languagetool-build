@@ -23,7 +23,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: 8
+          java-version: 17
           distribution: temurin
 
       - name: Build LanguageTool
@@ -34,7 +34,7 @@ jobs:
         run: git tag ${{ env.LT_VERSION }} && git push origin ${{ env.LT_VERSION }}
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

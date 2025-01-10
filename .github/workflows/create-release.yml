@@ -10,6 +10,8 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,12 +35,12 @@ jobs:
       - name: Create tag
         run: git tag ${{ env.LT_VERSION }} && git push origin ${{ env.LT_VERSION }}
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+      - name: "Create GitHub Release"
+        run: >
+          gh release create ${{ env.LT_VERSION }}
+          --title='${{ env.LT_VERSION }}'
+          --notes='LanguageTool ${{ env.LT_VERSION }} build from https://github.com/languagetool-org/languagetool used for https://github.com/ltex-plus/ltex-ls-plus'
+          'languagetool/languagetool-standalone/target/LanguageTool-${{ env.LT_VERSION }}.zip'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.LT_VERSION }}
-          body: LanguageTool ${{ env.LT_VERSION }} build from https://github.com/languagetool-org/languagetool used for https://github.com/ltex-plus/ltex-ls-plus
-          files: languagetool/languagetool-standalone/target/LanguageTool-*.zip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   

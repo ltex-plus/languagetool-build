@@ -16,7 +16,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set LanguageTool version
         run: "echo \"LT_VERSION=$(python -u -c \"import re; print(re.search(r'<lt-version>(.*?)</lt-version>', open('pom.xml', 'r').read()).group(1), end='')\")\" >> $GITHUB_ENV"
@@ -44,7 +44,7 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'ltex-plus/languagetool-build'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
 
